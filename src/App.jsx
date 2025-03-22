@@ -15,9 +15,12 @@ function App() {
   },[notes]);
 
   useEffect(() => {
-    // ローカルストレージにノートを保存
-    setActiveNote(notes[0].id);
-  },[notes]);
+    if (notes.length > 0) {
+      setActiveNote(notes[0].id);
+    } else {
+      setActiveNote(false); // または適切なデフォルト値
+    }
+  }, [notes]);
   
   const onAddNote = () => {
     console.log("新しくノートが追加されました");
