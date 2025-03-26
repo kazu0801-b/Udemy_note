@@ -29,6 +29,7 @@ function App() {
       title: "新しいノート",
       content: "新しいノートの内容",
       modDate: Date.now(),
+      isPinned: false, // ピン留め状態を初期化
     };
     setNotes([...notes,newNote]);
     console.log(notes);
@@ -56,6 +57,15 @@ function App() {
     setNotes(updatedNotesArray);
     };
 
+    const onTogglePin = (id) => {
+      const updatedNotesArray = notes.map((note) => {
+        if (note.id === id) {
+          return { ...note, isPinned: !note.isPinned }; // ピン留め状態を切り替え
+        }
+        return note;
+      });
+      setNotes(updatedNotesArray);
+    };
 
   return(
   <div className="App">
@@ -64,6 +74,8 @@ function App() {
       notes={notes}
       onDeleteNote={onDeleteNote}
       setActiveNote={setActiveNote}
+      activeNote={activeNote}
+      onTogglePin={onTogglePin} // ピン留め切り替え関数を渡す
       />
     <Main activeNote={getActiveNote()} onUpdateNote={onUpdateNote} />
   </div>

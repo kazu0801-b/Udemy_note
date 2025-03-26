@@ -7,9 +7,16 @@ const Sidebar = ({
     onDeleteNote,
     activeNote,
     setActiveNote,
+    onTogglePin, // 新しいプロパティ
     }) => {
 
-        const sortedNotes = notes.sort((a,b) => b.modDate - a.modDate);
+    const sortedNotes = notes.sort((a,b) =>{
+        // ピン留めされたノートを優先的に表示
+        if (a.isPinned === b.isPinned) {
+            return b.modDate - a.modDate;
+        }
+        return a.isPinned ? -1 : 1;
+    });
 
     return (
     <div className="app-sidebar">
@@ -20,19 +27,35 @@ const Sidebar = ({
         <div className ="app-sidebar-notes">
             {sortedNotes.map((note)=>(
             <div
-            className={`app-sidebar-note ${note.id === activeNote && "active"}`}
+            className={`app-sidebar-note
+                ${note.id === activeNote && "active"}
+                ${note.isPinned && "pinned"}`}
             key={note.id}
             onClick={()=>setActiveNote(note.id)}
             >
-                <div className="sidebar-note-title">
+
+            <div className="sidebar-note-title">
                     <strong>{note.title}</strong>
-                    <button onClick={() =>onDeleteNote(note.id)}>削除</button>
-                </div>
+                {!note.isPinned && (
+                <button onClick={() => onDeleteNote(note.id)}>削除</button>
+                )}
+                <button
+                onClick={(e) => {
+                  e.stopPropagation(); // ノート選択を防ぐ
+                    onTogglePin(note.id);
+                }}
+                >
+                {note.isPinned ? "📌" : "📍"} {/* ピン留めアイコン */}
+                </button>
+            </div>
+
                 <p>{note.content}</p>
-                <small>{new Date (note.modDate).toLocaleDateString("ja-jp",{
+                <small>
+                    {new Date (note.modDate).toLocaleDateString("ja-jp",{
                     hour: "2-digit",
                     minute: "2-digit",
-                })}</small>
+                })}
+                </small>
             </div>
             ))}
         </div>
